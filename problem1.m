@@ -26,3 +26,5 @@
 % resistivity/conductivity?
 % 4. "Account for a nonuniform dielectric constant" but epsilon_r for both
 % problems are constant?
+% Should we manually solve PDEs e.g. Laplace's Equation via MATLAB or
+% manually via FDM or another method?
