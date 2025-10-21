@@ -12,7 +12,7 @@ clear all;
 %% Solve for electric field between nanowire electrodes
 % CONT: Solve 3D Laplace's Equation in Cartesian Coords to find V then E
 % BCs: V(y=0) = 0; V(y=s) = 1
-% New BCs 10/20 in class: inside wire at width center vs one side
+% New BCs Oct 20 in class: inside wire at width center vs one side
 
 %% Determine how electro-optic performance varies w/ respect to nanowire
 % width "d" and nanowire separation distance "s"
@@ -22,12 +22,15 @@ clear all;
 % properties
 
 
-%% TODO: ASK QUESTIONS
+%% TODO: UPDATED QUESTIONS for 10/21 office hours
 % 1. Is E field direction incorrect in Figure 2?
 % 2. Is there a specific quantity for max speed of modulation? Same as
-% bandwidth for RC low pass filter?
-% 3. If so, can we just look up equations for finding/estimating R & C,
-% including material property values e.g. silver nanowire
-% resistivity/conductivity?
-% 4. "Account for a nonuniform dielectric constant" but epsilon_r for both
+% bandwidth for RC low pass filter? Look up material property values for R
+% & C e.g. silver nanowire resistivity/conductivity?
+% 3. "Account for a nonuniform dielectric constant" but epsilon_r for both
 % problems are constant?
+% 4. Correct extension from 2d to 3d in laplace_solver for FDM? How do we
+% handle Y & Z boundary conditions (only x-direction defined for 0V & 1V;
+% z-direction -> V independent of wire length)
+% 5. Include all calculations in report including solved by MATLAB? Submit
+% code separately? Hard to fit everything into 2-3 pages
