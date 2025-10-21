@@ -1,3 +1,7 @@
+clc;
+close all;
+clear all;
+
 %% HEADER (Problem 1)
 % Jerry Gao
 % Prof. Lawrence
@@ -7,7 +11,8 @@
 
 %% Solve for electric field between nanowire electrodes
 % CONT: Solve 3D Laplace's Equation in Cartesian Coords to find V then E
-% BCS: V(y=0) = 0; V(y=s) = 1
+% BCs: V(y=0) = 0; V(y=s) = 1
+% New BCs 10/20 in class: inside wire at width center vs one side
 
 %% Determine how electro-optic performance varies w/ respect to nanowire
 % width "d" and nanowire separation distance "s"
@@ -26,5 +31,3 @@
 % resistivity/conductivity?
 % 4. "Account for a nonuniform dielectric constant" but epsilon_r for both
 % problems are constant?
-% Should we manually solve PDEs e.g. Laplace's Equation via MATLAB or
-% manually via FDM or another method?

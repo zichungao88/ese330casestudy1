@@ -1,3 +1,7 @@
+clc;
+close all;
+clear all;
+
 %% HEADER (Problem 2)
 % Jerry Gao
 % Prof. Lawrence
