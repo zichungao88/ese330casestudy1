@@ -20,12 +20,12 @@ clear all;
 %          Here, all the grid, size, charges, etc. are defined
 %-------------------------------------------------------------------------%
 % Enter the dimensions
-Nx = 101;     % Number of X-grids
-Ny = 101;     % Number of Y-grids
+Nx = 201;     % Number of X-grids
+Ny = 201;     % Number of Y-grids
 mpx = ceil(Nx/2); % Mid-point of x
 mpy = ceil(Ny/2); % Mid point of y
    
-Ni = 750;  % Number of iterations for the Poisson solver
+Ni = 500;  % Number of iterations for the Poisson solver
 V = zeros(Nx,Ny);   % Potential (Voltage) matrix
 T = 0;            % Top-wall potential
 B = 0;            % Bottom-wall potential
@@ -50,11 +50,17 @@ V(Nx,Ny) = 0.5*(V(Nx,Ny-1)+V(Nx-1,Ny));
 
 %-------------------------------------------------------------------------%
 % TODO: MODIFY
-length_plate = 21;  % Length of plate in terms of number of grids
-length_plate2 = 21;
+% 201 grids
+% 200 grid spacings
+% each grid spacing = 10 nm
+% total grid side length = 2000 nm
+length_plate = 51;  % Length of plate in terms of number of grids (500 nm)
+length_plate2 = 51;
 lp = floor(length_plate/2);
 lp2 = floor(length_plate2/2);
-position_plate = 10; % Position of plate on x axis
+% KEY VARIABLE: separation distance s >= 50
+s = 50;
+position_plate = s/2; % Position of plate on x axis
 pp1 = mpx+position_plate;
 pp2 = mpx-position_plate;
 for z = 1:Ni    % Number of iterations
@@ -65,8 +71,13 @@ for z = 1:Ni    % Number of iterations
             % The next two lines are meant to force the matrix to hold the 
             % potential values for all iterations
             
-                V(pp1,mpy-lp:mpy+lp) = 1; % ACTUAL BCS
-                V(pp2,mpy-lp2:mpy+lp2) = -1; % ACTUAL BCS)
+                V(pp1,mpy-lp:mpy+lp) = 0.5; % ACTUAL BCS (V(x=s) = 1)
+                V(pp2,mpy-lp2:mpy+lp2) = -0.5; % ACTUAL BCS (V(x=0) = 0)
+                % BC Problem: original BCs run from 0 to 1, but grounding
+                % everywhere else (edges, corners, etc.) to 0V by default
+                % results in 0V wire disappearing
+                % Solution: offset electric potentials so to range from
+                % -0.5 to +0.5
                 %V(mpy-lp2:mpy+lp2,mpy-lp2:mpy+lp2) = -1;
                 
                 V(i,j)=0.25*(V(i+1,j)+V(i-1,j)+V(i,j+1)+V(i,j-1));
@@ -93,13 +104,18 @@ contourf(x,y,V,'LineColor','none')%,contour_range_V,'linewidth',0.5);%contour(x,
 colormap cool
 %hold on, quiver(x,y,Ex,Ey,3,"k")
 axis([min(x) max(x) min(y) max(y)]);
-colorbar('location','eastoutside','fontsize',14);
-xlabel('x-axis in meters','fontsize',14);
-ylabel('y-axis in meters','fontsize',14);
-title('Electric Potential distribution, V(x,y) in volts','fontsize',14);
+colorbar('location','eastoutside','fontsize',14,'color','black');
+xlabel('x-axis in nanometers (10^{-9} m)','fontsize',14,'color','black');
+ylabel('y-axis in nanometers (10^{-9} m)','fontsize',14,'color','black');
+title('Electric Potential Distribution V(x,y) in Volts','fontsize',14,'color','black');
 h1=gca;
+h1.XTickLabel = h1.XTick * 10;
+h1.YTickLabel = h1.YTick * 10;
+h1.XAxis.TickLabelColor = 'black';
+h1.YAxis.TickLabelColor = 'black';
+h1.Color = 'black';
 set(h1,'fontsize',14);
-fh1 = figure(1); 
+fh1 = figure(1);
 set(fh1, 'color', 'white')
 
 %% Contour Display for electric field
@@ -108,29 +124,42 @@ contour_range_E = -20:0.05:20;
 contourf(x,y,E);%,contour_range_E,'linewidth',0.5);%contour(x,y,E,contour_range_E,'linewidth',0.5)
 axis([min(x) max(x) min(y) max(y)]);
 colorbar('location','eastoutside','fontsize',14);
-xlabel('x-axis in meters','fontsize',14);
-ylabel('y-axis in meters','fontsize',14);
-title('Electric field distribution, E (x,y) in V/m','fontsize',14);
+xlabel('x-axis in nanometers (10^{-9} m)','fontsize',14);
+ylabel('y-axis in nanometers (10^{-9} m)','fontsize',14);
+title('Electric Field Distribution E (x,y) in V/m','fontsize',14);
 h2=gca;
+h2.XTickLabel = h2.XTick * 10;
+h2.YTickLabel = h2.YTick * 10;
+h2.XAxis.TickLabelColor = 'black';
+h2.YAxis.TickLabelColor = 'black';
 set(h2,'fontsize',14);
-fh2 = figure(2); 
+fh2 = figure(2);
 set(fh2, 'color', 'white')
 
 %% Quiver Display for electric field Lines
 figure(3)
 contour(x,y,E,'linewidth',0.5);
 hold on, quiver(x,y,Ex,Ey,6)%quiver(x,y,Ex,Ey,2)
-title('Electric field Lines, E (x,y) in V/m','fontsize',14);
+title('Electric Field Vector Lines E (x,y) in V/m','fontsize',14);
 axis([min(x) max(x) min(y) max(y)]);
 colorbar('location','eastoutside','fontsize',14);
-xlabel('x-axis in meters','fontsize',14);
-ylabel('y-axis in meters','fontsize',14);
+xlabel('x-axis in nanometers (10^{-9} m)','fontsize',14);
+ylabel('y-axis in nanometers (10^{-9} m)','fontsize',14);
 h3=gca;
+h3.XTickLabel = h3.XTick * 10;
+h3.YTickLabel = h3.YTick * 10;
+h3.XAxis.TickLabelColor = 'black';
+h3.YAxis.TickLabelColor = 'black';
 set(h3,'fontsize',14);
-fh3 = figure(3); 
+fh3 = figure(3);
 set(fh3, 'color', 'white')
 
 %-------------------------------------------------------------------------%
 % REFERENCE
 %           SADIKU, ELEMENTS OF ELECTROMAGNETICS, 4TH EDITION, OXFORD
 %-------------------------------------------------------------------------%
+
+%% NEXT STEPS:
+% 1. Consider "d" in E field -> EO performance
+% 2. Consider RC properties for modulations speed (C found via surface
+% area)
