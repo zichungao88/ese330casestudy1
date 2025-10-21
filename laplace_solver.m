@@ -20,46 +20,36 @@ clear all;
 %          Here, all the grid, size, charges, etc. are defined
 %-------------------------------------------------------------------------%
 % Enter the dimensions
-Nx = 51;     % Number of X-grids
-Ny = 51;     % Number of Y-grids
-Nz = 51;     % Number of Z-grids (extended to 3D)
-mpx = ceil(Nx/2); % Midpoint of x
-mpy = ceil(Ny/2); % Midpoint of y
-mpz = ceil(Nz/2); % Midpoint of z
+Nx = 101;     % Number of X-grids
+Ny = 101;     % Number of Y-grids
+mpx = ceil(Nx/2); % Mid-point of x
+mpy = ceil(Ny/2); % Mid point of y
    
 Ni = 750;  % Number of iterations for the Poisson solver
-V = zeros(Nx,Ny,Nz);   % Potential (Voltage) matrix
-Xmin = 0;            % Top-wall potential
-Xmax = 1;            % Bottom-wall potential
-Ymin = 0;            % Left-wall potential
-Ymax = 0;            % Right-wall potential (TODO: CHECK Y BCS)
-Zmin = 0;            % End of wire potential
-Zmax = 0;            % Other end of wire potential (TODO: CHECK Z BCS)
+V = zeros(Nx,Ny);   % Potential (Voltage) matrix
+T = 0;            % Top-wall potential
+B = 0;            % Bottom-wall potential
+L = 0;            % Left-wall potential
+R = 0;            % Right-wall potential
 
 %-------------------------------------------------------------------------%
-% Initializing edges potentials
+% Initializing edges potentials (DO NOT MODIFY)
 %-------------------------------------------------------------------------%
-V(1,:,:) = Xmin;
-V(Nx,:,:) = Xmax;
-V(:,1,:) = Ymin;
-V(:,Ny,:) = Ymax;
-V(:,:,1) = Zmin;
-V(:,:,Nz) = Zmax;
+V(1,:) = L;
+V(Nx,:) = R;
+V(:,1) = B;
+V(:,Ny) = T;
 
 %-------------------------------------------------------------------------%
-% Initializing Corner potentials
+% Initializing Corner potentials (DO NOT MODIFY)
 %-------------------------------------------------------------------------%
-V(1,1,1) = 1/3*(V(2,1,1)+V(1,2,1)+V(1,1,2));
-V(Nx,1,1) = 1/3*(V(Nx-1,1,1)+V(Nx,2,1)+V(Nx,1,2));
-V(1,Ny,1) = 1/3*(V(2,Ny,1)+V(1,Ny-1,1)+V(1,Ny,2));
-V(Nx,Ny,1) = 1/3*(V(Nx-1,Ny,1)+V(Nx,Ny-1,1)+V(Nx,Ny,2));
-V(1,1,Nz) = 1/3*(V(2,1,Nz)+V(1,2,Nz)+V(1,1,Nz-1));
-V(Nx,1,Nz) = 1/3*(V(Nx-1,1,Nz)+V(Nx,2,Nz)+V(Nx,1,Nz-1));
-V(1,Ny,Nz) = 1/3*(V(2,Ny,Nz)+V(1,Ny-1,Nz)+V(1,Ny,Nz-1));
-V(Nx,Ny,Nz) = 1/3*(V(Nx-1,Ny,Nz)+V(Nx,Ny-1,Nz)+V(Nx,Ny,Nz-1));
+V(1,1) = 0.5*(V(1,2)+V(2,1));
+V(Nx,1) = 0.5*(V(Nx-1,1)+V(Nx,2));
+V(1,Ny) = 0.5*(V(1,Ny-1)+V(2,Ny));
+V(Nx,Ny) = 0.5*(V(Nx,Ny-1)+V(Nx-1,Ny));
 
 %-------------------------------------------------------------------------%
-% TODO: Cont w/ 2D to 3D transformation
+% TODO: MODIFY
 length_plate = 21;  % Length of plate in terms of number of grids
 length_plate2 = 21;
 lp = floor(length_plate/2);
@@ -75,8 +65,8 @@ for z = 1:Ni    % Number of iterations
             % The next two lines are meant to force the matrix to hold the 
             % potential values for all iterations
             
-                V(pp1,mpy-lp:mpy+lp) = 1;
-                V(pp2,mpy-lp2:mpy+lp2) = -1;
+                V(pp1,mpy-lp:mpy+lp) = 1; % ACTUAL BCS
+                V(pp2,mpy-lp2:mpy+lp2) = -1; % ACTUAL BCS)
                 %V(mpy-lp2:mpy+lp2,mpy-lp2:mpy+lp2) = -1;
                 
                 V(i,j)=0.25*(V(i+1,j)+V(i-1,j)+V(i,j+1)+V(i,j-1));
