@@ -157,6 +157,11 @@ set(h3,'fontsize',14);
 fh3 = figure(3);
 set(fh3, 'color', 'white')
 
+%% Modulation strength calculation (CONT)
+waveguide = E(76:126,76:126);
+average_field_strength = mean(waveguide(:));
+disp(average_field_strength);
+
 %-------------------------------------------------------------------------%
 % REFERENCE
 %           SADIKU, ELEMENTS OF ELECTROMAGNETICS, 4TH EDITION, OXFORD
