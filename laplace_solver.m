@@ -25,7 +25,7 @@ Ny = 201;     % Number of Y-grids
 mpx = ceil(Nx/2); % Mid-point of x
 mpy = ceil(Ny/2); % Mid point of y
    
-Ni = 500;  % Number of iterations for the Poisson solver
+Ni = 250;  % Number of iterations for the Poisson solver (original 750)
 V = zeros(Nx,Ny);   % Potential (Voltage) matrix
 T = 0;            % Top-wall potential
 B = 0;            % Bottom-wall potential
@@ -49,41 +49,41 @@ V(1,Ny) = 0.5*(V(1,Ny-1)+V(2,Ny));
 V(Nx,Ny) = 0.5*(V(Nx,Ny-1)+V(Nx-1,Ny));
 
 %-------------------------------------------------------------------------%
-% TODO: MODIFY
 % 201 grids
 % 200 grid spacings
 % each grid spacing = 10 nm
 % total grid side length = 2000 nm
 length_plate = 51;  % Length of plate in terms of number of grids (500 nm)
-length_plate2 = 51;
 lp = floor(length_plate/2);
-lp2 = floor(length_plate2/2);
 % KEY VARIABLE: separation distance s >= 50
 s = 50;
+% KEY VARIABLE: nanowire width d
+d = 20;
 position_plate = s/2; % Position of plate on x axis
 pp1 = mpx+position_plate;
 pp2 = mpx-position_plate;
+% Forcing equipotential wires
+conductor = false(Nx,Ny);
+conductor(pp1:pp1+d,mpy-lp:mpy+lp) = true; % Inside nanowire
+conductor(pp2-d:pp2,mpy-lp:mpy+lp) = true; % Inside nanowire
 for z = 1:Ni    % Number of iterations
-        
-        for i=2:Nx-1
-        for j=2:Ny-1      
-            
+    for i=2:Nx-1
+        for j=2:Ny-1
             % The next two lines are meant to force the matrix to hold the 
             % potential values for all iterations
-            
-                V(pp1,mpy-lp:mpy+lp) = 0.5; % ACTUAL BCS (V(x=s) = 1)
-                V(pp2,mpy-lp2:mpy+lp2) = -0.5; % ACTUAL BCS (V(x=0) = 0)
-                % BC Problem: original BCs run from 0 to 1, but grounding
-                % everywhere else (edges, corners, etc.) to 0V by default
-                % results in 0V wire disappearing
-                % Solution: offset electric potentials so to range from
-                % -0.5 to +0.5
-                %V(mpy-lp2:mpy+lp2,mpy-lp2:mpy+lp2) = -1;
-                
+            V(pp1:pp1+d,mpy-lp:mpy+lp) = 0.5; % ACTUAL BCS (V(x=s) = 1)
+            V(pp2-d:pp2,mpy-lp:mpy+lp) = -0.5; % ACTUAL BCS (V(x=0) = 0)
+            % BC Problem: original BCs run from 0 to 1, but grounding
+            % everywhere else (edges, corners, etc.) to 0V by default
+            % results in 0V wire disappearing
+            % Solution: offset electric potentials so to range from
+            % -0.5 to +0.5
+            %V(mpy-lp2:mpy+lp2,mpy-lp2:mpy+lp2) = -1;
+            if ~(conductor(i,j))
                 V(i,j)=0.25*(V(i+1,j)+V(i-1,j)+V(i,j+1)+V(i,j-1));
+            end
         end
-        end
-        
+    end
 end
 
 % Take transpose for proper x-y orientation
@@ -100,14 +100,15 @@ y = (1:Ny)-mpy;
 %% Contour Display for electric potential
 figure(1)
 contour_range_V = -101:0.5:101;
-contourf(x,y,V,'LineColor','none')%,contour_range_V,'linewidth',0.5);%contour(x,y,V,contour_range_V,'linewidth',0.5)
-colormap cool
+contourf(x,y,V,50,'LineColor','none')%,contour_range_V,'linewidth',0.5);%contour(x,y,V,contour_range_V,'linewidth',0.5)
 %hold on, quiver(x,y,Ex,Ey,3,"k")
-axis([min(x) max(x) min(y) max(y)]);
-colorbar('location','eastoutside','fontsize',14,'color','black');
-xlabel('x-axis in nanometers (10^{-9} m)','fontsize',14,'color','black');
-ylabel('y-axis in nanometers (10^{-9} m)','fontsize',14,'color','black');
 title('Electric Potential Distribution V(x,y) in Volts','fontsize',14,'color','black');
+axis([min(x) max(x) min(y) max(y)]);
+cb = colorbar('location','eastoutside','fontsize',14,'color','black');
+new_voltage_labels = arrayfun(@(x) sprintf('%.1f',x),cb.Ticks+0.5, 'uniformoutput', false);
+cb.TickLabels = new_voltage_labels;
+xlabel('X-Axis in Nanometers (10^{-9} m)','fontsize',14,'color','black');
+ylabel('Y-Axis in Nanometers (10^{-9} m)','fontsize',14,'color','black');
 h1=gca;
 h1.XTickLabel = h1.XTick * 10;
 h1.YTickLabel = h1.YTick * 10;
@@ -121,17 +122,18 @@ set(fh1, 'color', 'white')
 %% Contour Display for electric field
 figure(2)
 contour_range_E = -20:0.05:20;
-contourf(x,y,E);%,contour_range_E,'linewidth',0.5);%contour(x,y,E,contour_range_E,'linewidth',0.5)
+contourf(x,y,E,50,'LineColor', 'None');%,contour_range_E,'linewidth',0.5);%contour(x,y,E,contour_range_E,'linewidth',0.5)
+title('Electric Field Distribution E(x,y) in V/m','fontsize',14,'color','black');
 axis([min(x) max(x) min(y) max(y)]);
-colorbar('location','eastoutside','fontsize',14);
-xlabel('x-axis in nanometers (10^{-9} m)','fontsize',14);
-ylabel('y-axis in nanometers (10^{-9} m)','fontsize',14);
-title('Electric Field Distribution E (x,y) in V/m','fontsize',14);
+colorbar('location','eastoutside','fontsize',14,'color','black');
+xlabel('X-Axis in Nanometers (10^{-9} m)','fontsize',14,'color','black');
+ylabel('Y-Axis in Nanometers (10^{-9} m)','fontsize',14,'color','black');
 h2=gca;
 h2.XTickLabel = h2.XTick * 10;
 h2.YTickLabel = h2.YTick * 10;
 h2.XAxis.TickLabelColor = 'black';
 h2.YAxis.TickLabelColor = 'black';
+h2.Color = 'black';
 set(h2,'fontsize',14);
 fh2 = figure(2);
 set(fh2, 'color', 'white')
@@ -140,16 +142,17 @@ set(fh2, 'color', 'white')
 figure(3)
 contour(x,y,E,'linewidth',0.5);
 hold on, quiver(x,y,Ex,Ey,6)%quiver(x,y,Ex,Ey,2)
-title('Electric Field Vector Lines E (x,y) in V/m','fontsize',14);
+title('Electric Field Vector Lines E(x,y) in V/m','fontsize',14,'color','black');
 axis([min(x) max(x) min(y) max(y)]);
-colorbar('location','eastoutside','fontsize',14);
-xlabel('x-axis in nanometers (10^{-9} m)','fontsize',14);
-ylabel('y-axis in nanometers (10^{-9} m)','fontsize',14);
+colorbar('location','eastoutside','fontsize',14,'color','black');
+xlabel('X-Axis in Nanometers (10^{-9} m)','fontsize',14,'color','black');
+ylabel('Y-Axis in Nanometers (10^{-9} m)','fontsize',14,'color','black');
 h3=gca;
 h3.XTickLabel = h3.XTick * 10;
 h3.YTickLabel = h3.YTick * 10;
 h3.XAxis.TickLabelColor = 'black';
 h3.YAxis.TickLabelColor = 'black';
+h3.Color = 'black';
 set(h3,'fontsize',14);
 fh3 = figure(3);
 set(fh3, 'color', 'white')
@@ -160,6 +163,7 @@ set(fh3, 'color', 'white')
 %-------------------------------------------------------------------------%
 
 %% NEXT STEPS:
-% 1. Consider "d" in E field -> EO performance
-% 2. Consider RC properties for modulations speed (C found via surface
+% 1. Hand-tune values of s & d to find largest average magnitude of e field
+% through the 500x500 waveguide (modulation strength)
+% 2. Consider RC properties for modulation speed (C found via surface
 % area)
