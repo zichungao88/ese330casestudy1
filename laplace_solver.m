@@ -25,7 +25,7 @@ Ny = 201;     % Number of Y-grids
 mpx = ceil(Nx/2); % Mid-point of x
 mpy = ceil(Ny/2); % Mid point of y
    
-Ni = 250;  % Number of iterations for the Poisson solver (original 750)
+Ni = 100;  % Number of iterations for the Poisson solver (original 750)
 V = zeros(Nx,Ny);   % Potential (Voltage) matrix
 T = 0;            % Top-wall potential
 B = 0;            % Bottom-wall potential
@@ -43,10 +43,10 @@ V(:,Ny) = T;
 %-------------------------------------------------------------------------%
 % Initializing Corner potentials (DO NOT MODIFY)
 %-------------------------------------------------------------------------%
-V(1,1) = 0.5*(V(1,2)+V(2,1));
-V(Nx,1) = 0.5*(V(Nx-1,1)+V(Nx,2));
-V(1,Ny) = 0.5*(V(1,Ny-1)+V(2,Ny));
-V(Nx,Ny) = 0.5*(V(Nx,Ny-1)+V(Nx-1,Ny));
+V(1,1) = 0.5 * (V(1,2) + V(2,1));
+V(Nx,1) = 0.5 * (V(Nx-1,1) + V(Nx,2));
+V(1,Ny) = 0.5 * (V(1,Ny-1) + V(2,Ny));
+V(Nx,Ny) = 0.5 * (V(Nx,Ny-1) + V(Nx-1,Ny));
 
 %-------------------------------------------------------------------------%
 % 201 grids
@@ -58,14 +58,27 @@ lp = floor(length_plate/2);
 % KEY VARIABLE: separation distance s >= 50
 s = 50;
 % KEY VARIABLE: nanowire width d
-d = 20;
-position_plate = s/2; % Position of plate on x axis
-pp1 = mpx+position_plate;
-pp2 = mpx-position_plate;
+d = 1;
+position_plate = s / 2; % Position of plate on x axis
+pp1 = mpx + position_plate;
+pp2 = mpx - position_plate;
+
 % Forcing equipotential wires
 conductor = false(Nx,Ny);
 conductor(pp1:pp1+d,mpy-lp:mpy+lp) = true; % Inside nanowire
 conductor(pp2-d:pp2,mpy-lp:mpy+lp) = true; % Inside nanowire
+
+% Permittivity (epsilon) "field"
+% Note on the section below: I did not realize that epsilon_r = 1 til I was
+% almost done with implementation, i.e. the waveguide's permittivity
+% constant is exactly that of free space/vacuum so doing this in this case
+% is lowkey overkill, but this neatly sets up the next problem
+epsilon_0 = 8.854e-12;
+epsilon_r = 1;
+epsilon_waveguide = epsilon_0 * epsilon_r;
+epsilon_field = ones(Nx,Ny) * epsilon_0;
+epsilon_field(76:126,76:126) = epsilon_waveguide;
+
 for z = 1:Ni    % Number of iterations
     for i=2:Nx-1
         for j=2:Ny-1
@@ -80,7 +93,13 @@ for z = 1:Ni    % Number of iterations
             % -0.5 to +0.5
             %V(mpy-lp2:mpy+lp2,mpy-lp2:mpy+lp2) = -1;
             if ~(conductor(i,j))
-                V(i,j)=0.25*(V(i+1,j)+V(i-1,j)+V(i,j+1)+V(i,j-1));
+                epsilon_x_positive = 0.5 * (epsilon_field(i,j) + epsilon_field(i+1,j));
+                epsilon_x_negative = 0.5 * (epsilon_field(i,j) + epsilon_field(i-1,j));
+                epsilon_y_positive = 0.5 * (epsilon_field(i,j) + epsilon_field(i,j+1));
+                epsilon_y_negative = 0.5 * (epsilon_field(i,j) + epsilon_field(i,j-1));
+                V(i,j) = (epsilon_x_positive * V(i+1,j) + epsilon_x_negative * V(i-1,j) + ...
+                    epsilon_y_positive * V(i,j+1) + epsilon_y_negative * V(i,j-1)) / ( ...
+                    epsilon_x_positive + epsilon_x_negative + epsilon_y_positive + epsilon_y_negative);
             end
         end
     end
@@ -158,7 +177,7 @@ fh3 = figure(3);
 set(fh3, 'color', 'white')
 
 %% Modulation strength calculation (CONT)
-waveguide = E(76:126,76:126);
+waveguide = E(76:126,76:126); % 500 nm by 500 nm centered at the origin
 average_field_strength = mean(waveguide(:));
 disp(average_field_strength);
 
