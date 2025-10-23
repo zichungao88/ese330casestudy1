@@ -61,8 +61,9 @@ V(Nx,Ny) = 0.5 * (V(Nx,Ny-1) + V(Nx-1,Ny));
 % total grid side length = 2000 nm
 length_plate = 51;  % Length of plate in terms of number of grids (500 nm)
 lp = floor(length_plate/2);
-% KEY VARIABLE: separation distance s >= 50
-s = 50; % 50 pixels = 500 nm
+% KEY VARIABLE: separation distance s >= 52 (waveguide & nano wires cannot
+% physically touch)
+s = 52; % 52 pixels = 520 nm
 % KEY VARIABLE: nanowire width d
 d = 1; % 1 pixel = 10 nm
 position_plate = s / 2; % Position of plate on x axis
