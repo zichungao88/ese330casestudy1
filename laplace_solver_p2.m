@@ -123,8 +123,8 @@ end
 % Take transpose for proper x-y orientation
 V = V';
 [Ex,Ey]=gradient(V);
-Ex = -Ex;
-Ey = -Ey;
+Ex = -Ex * 10e8;
+Ey = -Ey * 10e8;
 
 % Electric field Magnitude
 E = sqrt(Ex.^2+Ey.^2);
@@ -191,12 +191,31 @@ set(h3,'fontsize',14);
 fh3 = figure(3);
 set(fh3, 'color', 'white')
 
-%% Modulation strength calculation (CONT)
+%% (Approximate) Modulation strength calculation
 waveguide = E(mpx-size_wg:mpx+size_wg,mpy-size_wg:mpy+size_wg); % 500 nm by 500 nm centered at the origin
 average_field_strength = mean(waveguide(:));
-disp(average_field_strength);
+fprintf('Average E Field Strength thru Waveguide: %d',average_field_strength);
+fprintf('\n');
+
+%% Maximum speed of modulation calculation (based on r & c given by tuned s & d)
+conductivity = 6.3e7;
+cross_sectional_area = 500e-9 * d * 10e-9;
+resistance = 50e-6 / (conductivity * cross_sectional_area);
+fprintf('Resistance: %d',resistance);
+fprintf('\n');
+
+surface_area = (cross_sectional_area + 500e-9 * 50e-6 + d * 10e-9 * 50e-6) * 2;
+capacitance = epsilon_wg * surface_area / (s * 10e-9);
+fprintf('Capacitance: %d',capacitance);
+fprintf('\n');
+
+modulation_speed = 1 / (resistance * capacitance);
+fprintf('Modulation Speed: %d',modulation_speed);
+fprintf('\n');
 
 %-------------------------------------------------------------------------%
 % REFERENCE
 %           SADIKU, ELEMENTS OF ELECTROMAGNETICS, 4TH EDITION, OXFORD
 %-------------------------------------------------------------------------%
+
+%% NEXT STEP: check resulting e field, r, c, & speed params like p1
