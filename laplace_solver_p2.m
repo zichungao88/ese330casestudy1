@@ -25,7 +25,7 @@ clear all;
 %                         INITIALIZATION                                  
 %          Here, all the grid, size, charges, etc. are defined
 %-------------------------------------------------------------------------%
-% Enter the dimensions
+% Enter the dimensions (setup is the same as Problem 1)
 Nx = 201;     % Number of X-grids
 Ny = 201;     % Number of Y-grids
 mpx = ceil(Nx/2); % Mid-point of x
@@ -59,35 +59,48 @@ V(Nx,Ny) = 0.5 * (V(Nx,Ny-1) + V(Nx-1,Ny));
 % 200 grid spacings
 % each grid spacing = 10 nm
 % total grid side length = 2000 nm
-length_plate = 51;  % Length of plate in terms of number of grids (500 nm)
-lp = floor(length_plate/2);
+height_wire = 50;  % Length of plate in terms of number of grids (500 nm)
+hw = floor(height_wire/2);
 % KEY VARIABLE: separation distance s >= 50
-s = 50;
+s = 52; % 52 pixels = 520 nm
 % KEY VARIABLE: nanowire width d
-d = 1;
+d = 20; % given this time: 20 pixels = 200 nm
 position_plate = s / 2; % Position of plate on x axis
 pp1 = mpx + position_plate;
 pp2 = mpx - position_plate;
 
+size_wg = 50; % 50 pixels = 500 nm
+
+width_new_material = 100; % 100 pixels = 1000 nm
+height_new_material = 15; % 15 pixels = 150 nm
+wn = floor(width_new_material/2);
+
 % Forcing equipotential wires
 conductor = false(Nx,Ny);
-conductor(pp1:pp1+d,mpy-lp:mpy+lp) = true; % Inside nanowire
-conductor(pp2-d:pp2,mpy-lp:mpy+lp) = true; % Inside nanowire
+conductor(pp1:pp1+d,mpy-hw:mpy+hw) = true; % Inside nanowire
+conductor(pp2-d:pp2,mpy-hw:mpy+hw) = true; % Inside nanowire
+
+% New orange material
+% new_material = false(Nx,Ny);
+% new_material(mpx-wn:mpx+wn,mpy+hw:mpy+hw+height_new_material) = true; % Inside new material
 
 % Permittivity (epsilon) "field" (non-uniform)
 epsilon_0 = 8.854e-12;
-epsilon_r = 1;
-epsilon_waveguide = epsilon_0 * epsilon_r;
+epsilon_r_wg = 1;
+epsilon_wg = epsilon_0 * epsilon_r_wg;
+epsilon_r_nm = 2000;
+epsilon_nm = epsilon_0 * epsilon_r_nm;
 epsilon_field = ones(Nx,Ny) * epsilon_0;
-epsilon_field(76:126,76:126) = epsilon_waveguide;
+epsilon_field(mpx-size_wg:mpx+size_wg,mpy-size_wg:mpy+size_wg) = epsilon_wg;
+epsilon_field(mpx-wn:mpx+wn,mpy+hw:mpy+hw+height_new_material) = epsilon_nm;
 
 for z = 1:Ni    % Number of iterations
     for i=2:Nx-1
         for j=2:Ny-1
             % The next two lines are meant to force the matrix to hold the 
             % potential values for all iterations
-            V(pp1:pp1+d,mpy-lp:mpy+lp) = 0.5; % ACTUAL BCS (V(x=s) = 1)
-            V(pp2-d:pp2,mpy-lp:mpy+lp) = -0.5; % ACTUAL BCS (V(x=0) = 0)
+            V(pp1:pp1+d,mpy-hw:mpy+hw) = 0.5; % ACTUAL BCS (V(x=s) = 1)
+            V(pp2-d:pp2,mpy-hw:mpy+hw) = -0.5; % ACTUAL BCS (V(x=0) = 0)
             % BC Problem: original BCs run from 0 to 1, but grounding
             % everywhere else (edges, corners, etc.) to 0V by default
             % results in 0V wire disappearing
@@ -179,7 +192,7 @@ fh3 = figure(3);
 set(fh3, 'color', 'white')
 
 %% Modulation strength calculation (CONT)
-waveguide = E(76:126,76:126); % 500 nm by 500 nm centered at the origin
+waveguide = E(mpx-size_wg:mpx+size_wg,mpy-size_wg:mpy+size_wg); % 500 nm by 500 nm centered at the origin
 average_field_strength = mean(waveguide(:));
 disp(average_field_strength);
 

@@ -59,8 +59,8 @@ V(Nx,Ny) = 0.5 * (V(Nx,Ny-1) + V(Nx-1,Ny));
 % 200 grid spacings
 % each grid spacing = 10 nm
 % total grid side length = 2000 nm
-length_plate = 51;  % Length of plate in terms of number of grids (500 nm)
-lp = floor(length_plate/2);
+height_wire = 50;  % Length of plate in terms of number of grids (500 nm)
+hw = floor(height_wire/2);
 % KEY VARIABLE: separation distance s >= 52 (waveguide & nano wires cannot
 % physically touch)
 s = 52; % 52 pixels = 520 nm
@@ -70,29 +70,31 @@ position_plate = s / 2; % Position of plate on x axis
 pp1 = mpx + position_plate;
 pp2 = mpx - position_plate;
 
+size_wg = 50; % 50 pixels = 500 nm
+
 % Forcing equipotential wires
 conductor = false(Nx,Ny);
-conductor(pp1:pp1+d,mpy-lp:mpy+lp) = true; % Inside nanowire
-conductor(pp2-d:pp2,mpy-lp:mpy+lp) = true; % Inside nanowire
+conductor(pp1:pp1+d,mpy-hw:mpy+hw) = true; % Inside nanowire
+conductor(pp2-d:pp2,mpy-hw:mpy+hw) = true; % Inside nanowire
 
 % Permittivity (epsilon) "field"
 % Note on the section below: I did not realize that epsilon_r = 1 til I was
 % almost done with implementation, i.e. the waveguide's permittivity
 % constant is exactly that of free space/vacuum so doing this in this case
-% is lowkey overkill, but this neatly sets up the next problem
+% is lowkey overkill, but this neatly sets up Problem 2
 epsilon_0 = 8.854e-12;
 epsilon_r = 1;
 epsilon_waveguide = epsilon_0 * epsilon_r;
 epsilon_field = ones(Nx,Ny) * epsilon_0;
-epsilon_field(76:126,76:126) = epsilon_waveguide;
+epsilon_field(mpx-size_wg:mpx+size_wg,mpy-size_wg:mpy+size_wg) = epsilon_waveguide;
 
 for z = 1:Ni    % Number of iterations
     for i=2:Nx-1
         for j=2:Ny-1
             % The next two lines are meant to force the matrix to hold the 
             % potential values for all iterations
-            V(pp1:pp1+d,mpy-lp:mpy+lp) = 0.5; % ACTUAL BCS (V(x=s) = 1)
-            V(pp2-d:pp2,mpy-lp:mpy+lp) = -0.5; % ACTUAL BCS (V(x=0) = 0)
+            V(pp1:pp1+d,mpy-hw:mpy+hw) = 0.5; % ACTUAL BCS (V(x=s) = 1)
+            V(pp2-d:pp2,mpy-hw:mpy+hw) = -0.5; % ACTUAL BCS (V(x=0) = 0)
             % BC Problem: original BCs run from 0 to 1, but grounding
             % everywhere else (edges, corners, etc.) to 0V by default
             % results in 0V wire disappearing
@@ -126,7 +128,7 @@ y = (1:Ny)-mpy;
 %% Contour Display for electric potential
 figure(1)
 contour_range_V = -101:0.5:101;
-contourf(x,y,V,50,'LineColor','none')%,contour_range_V,'linewidth',0.5);%contour(x,y,V,contour_range_V,'linewidth',0.5)
+contourf(x,y,V,100,'LineColor','none')%,contour_range_V,'linewidth',0.5);%contour(x,y,V,contour_range_V,'linewidth',0.5)
 %hold on, quiver(x,y,Ex,Ey,3,"k")
 title('Electric Potential Distribution V(x,y) in Volts','fontsize',14,'color','black');
 axis([min(x) max(x) min(y) max(y)]);
@@ -148,7 +150,7 @@ set(fh1, 'color', 'white')
 %% Contour Display for electric field
 figure(2)
 contour_range_E = -20:0.05:20;
-contourf(x,y,E,50,'LineColor', 'None');%,contour_range_E,'linewidth',0.5);%contour(x,y,E,contour_range_E,'linewidth',0.5)
+contourf(x,y,E,100,'LineColor', 'None');%,contour_range_E,'linewidth',0.5);%contour(x,y,E,contour_range_E,'linewidth',0.5)
 title('Electric Field Distribution E(x,y) in V/m','fontsize',14,'color','black');
 axis([min(x) max(x) min(y) max(y)]);
 colorbar('location','eastoutside','fontsize',14,'color','black');
@@ -184,7 +186,7 @@ fh3 = figure(3);
 set(fh3, 'color', 'white')
 
 %% (Approximate) Modulation strength calculation
-waveguide = E(76:126,76:126); % 500 nm by 500 nm centered at the origin
+waveguide = E(mpx-size_wg:mpx+size_wg,mpy-size_wg:mpy+size_wg); % 500 nm by 500 nm centered at the origin
 average_field_strength = mean(waveguide(:));
 disp(average_field_strength);
 
@@ -211,4 +213,4 @@ disp(modulation_speed);
 % through the 500x500 waveguide (modulation strength) (done for now; can
 % include plot for varying values later)
 % 2. Consider RC properties for modulation speed (C found via surface
-% area) (TODO: consider bcs for current inside wire
+% area) (TODO: consider bcs for current inside wire — but what? J is uniform)
