@@ -195,7 +195,9 @@ set(fh3, 'color', 'white')
 %% (Approximate) Modulation strength calculation
 waveguide = E(mpx-swg:mpx+swg,mpy-swg:mpy+swg); % 500 nm by 500 nm centered at the origin
 average_field_strength = mean(waveguide(:));
-fprintf('Average E Field Strength thru Waveguide: %d',average_field_strength);
+area_wg = (size_wg * 10e-8) ^ 2;
+modulation_strength = average_field_strength / area_wg;
+fprintf('Modulation Strength: %d',modulation_strength);
 fprintf('\n');
 
 %% Maximum speed of modulation calculation (based on r & c given by tuned s & d)
@@ -218,5 +220,3 @@ fprintf('\n');
 % REFERENCE
 %           SADIKU, ELEMENTS OF ELECTROMAGNETICS, 4TH EDITION, OXFORD
 %-------------------------------------------------------------------------%
-
-%% NEXT STEP: check resulting e field, r, c, & speed params like p1

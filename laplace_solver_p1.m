@@ -189,7 +189,9 @@ set(fh3, 'color', 'white')
 %% (Approximate) Modulation strength calculation
 waveguide = E(mpx-swg:mpx+swg,mpy-swg:mpy+swg); % 500 nm by 500 nm centered at the origin
 average_field_strength = mean(waveguide(:));
-fprintf('Average E Field Strength thru Waveguide: %d',average_field_strength);
+area_wg = (size_wg * 10e-8) ^ 2;
+modulation_strength = average_field_strength / area_wg;
+fprintf('Modulation Strength: %d',modulation_strength);
 fprintf('\n');
 
 %% Maximum speed of modulation calculation (based on r & c given by tuned s & d)
@@ -219,3 +221,8 @@ fprintf('\n');
 % include plot for varying values later)
 % 2. Consider RC properties for modulation speed (C found via surface
 % area) (TODO: consider bcs for current inside wire — but what? J is uniform)
+
+%% QUESTIONS FOR 10/24 OFFICE HOURS:
+% 1. "Did you modify the boundary conditions to model current flow in the
+% wires?" But what BCs? Is J not constant? (also ask about whiteboard
+% drawing from class)
