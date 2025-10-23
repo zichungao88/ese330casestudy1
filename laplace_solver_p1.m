@@ -65,12 +65,13 @@ hw = floor(height_wire/2);
 % physically touch)
 s = 52; % 52 pixels = 520 nm
 % KEY VARIABLE: nanowire width d
-d = 1; % 1 pixel = 10 nm
+d = 20; % 1 pixel = 10 nm
 position_plate = s / 2; % Position of plate on x axis
 pp1 = mpx + position_plate;
 pp2 = mpx - position_plate;
 
 size_wg = 50; % 50 pixels = 500 nm
+swg = floor(size_wg/2);
 
 % Forcing equipotential wires
 conductor = false(Nx,Ny);
@@ -84,9 +85,9 @@ conductor(pp2-d:pp2,mpy-hw:mpy+hw) = true; % Inside nanowire
 % is lowkey overkill, but this neatly sets up Problem 2
 epsilon_0 = 8.854e-12;
 epsilon_r = 1;
-epsilon_waveguide = epsilon_0 * epsilon_r;
+epsilon_wg = epsilon_0 * epsilon_r;
 epsilon_field = ones(Nx,Ny) * epsilon_0;
-epsilon_field(mpx-size_wg:mpx+size_wg,mpy-size_wg:mpy+size_wg) = epsilon_waveguide;
+epsilon_field(mpx-swg:mpx+swg,mpy-swg:mpy+swg) = epsilon_wg;
 
 for z = 1:Ni    % Number of iterations
     for i=2:Nx-1
@@ -186,7 +187,7 @@ fh3 = figure(3);
 set(fh3, 'color', 'white')
 
 %% (Approximate) Modulation strength calculation
-waveguide = E(mpx-size_wg:mpx+size_wg,mpy-size_wg:mpy+size_wg); % 500 nm by 500 nm centered at the origin
+waveguide = E(mpx-swg:mpx+swg,mpy-swg:mpy+swg); % 500 nm by 500 nm centered at the origin
 average_field_strength = mean(waveguide(:));
 fprintf('Average E Field Strength thru Waveguide: %d',average_field_strength);
 fprintf('\n');
@@ -199,7 +200,7 @@ fprintf('Resistance: %d',resistance);
 fprintf('\n');
 
 surface_area = (cross_sectional_area + 500e-9 * 50e-6 + d * 10e-9 * 50e-6) * 2;
-capacitance = epsilon_waveguide * surface_area / (s * 10e-9);
+capacitance = epsilon_wg * surface_area / (s * 10e-9);
 fprintf('Capacitance: %d',capacitance);
 fprintf('\n');
 

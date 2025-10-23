@@ -70,6 +70,7 @@ pp1 = mpx + position_plate;
 pp2 = mpx - position_plate;
 
 size_wg = 50; % 50 pixels = 500 nm
+swg = floor(size_wg/2);
 
 width_new_material = 100; % 100 pixels = 1000 nm
 height_new_material = 15; % 15 pixels = 150 nm
@@ -91,7 +92,7 @@ epsilon_wg = epsilon_0 * epsilon_r_wg;
 epsilon_r_nm = 2000;
 epsilon_nm = epsilon_0 * epsilon_r_nm;
 epsilon_field = ones(Nx,Ny) * epsilon_0;
-epsilon_field(mpx-size_wg:mpx+size_wg,mpy-size_wg:mpy+size_wg) = epsilon_wg;
+epsilon_field(mpx-swg:mpx+swg,mpy-swg:mpy+swg) = epsilon_wg;
 epsilon_field(mpx-wn:mpx+wn,mpy+hw:mpy+hw+height_new_material) = epsilon_nm;
 
 for z = 1:Ni    % Number of iterations
@@ -192,7 +193,7 @@ fh3 = figure(3);
 set(fh3, 'color', 'white')
 
 %% (Approximate) Modulation strength calculation
-waveguide = E(mpx-size_wg:mpx+size_wg,mpy-size_wg:mpy+size_wg); % 500 nm by 500 nm centered at the origin
+waveguide = E(mpx-swg:mpx+swg,mpy-swg:mpy+swg); % 500 nm by 500 nm centered at the origin
 average_field_strength = mean(waveguide(:));
 fprintf('Average E Field Strength thru Waveguide: %d',average_field_strength);
 fprintf('\n');
