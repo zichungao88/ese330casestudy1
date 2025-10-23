@@ -1,4 +1,10 @@
 %% Adapted from Prof. Mark Lawrence
+% Jerry Gao
+% Prof. Lawrence
+% FL25 ESE 3300/330 Engineering Electromagnets Principles
+% Midterm Case Study 1
+% 18 October 2025
+% Problem 1
 %-------------------------------------------------------------------------%
 %  This simple program computes the Electric Fields due to 
 %  Parallel plate Capacitors using the Finite difference method (FDM)  
