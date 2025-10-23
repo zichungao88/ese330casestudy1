@@ -115,8 +115,8 @@ end
 % Take transpose for proper x-y orientation
 V = V';
 [Ex,Ey]=gradient(V);
-Ex = -Ex;
-Ey = -Ey;
+Ex = -Ex * 10e8; % rescale from V/pixel back to SI unit V/m
+Ey = -Ey * 10e8;
 
 % Electric field Magnitude
 E = sqrt(Ex.^2+Ey.^2);
@@ -211,4 +211,4 @@ disp(modulation_speed);
 % through the 500x500 waveguide (modulation strength) (done for now; can
 % include plot for varying values later)
 % 2. Consider RC properties for modulation speed (C found via surface
-% area)
+% area) (TODO: consider bcs for current inside wire
