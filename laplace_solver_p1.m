@@ -62,9 +62,9 @@ V(Nx,Ny) = 0.5 * (V(Nx,Ny-1) + V(Nx-1,Ny));
 length_plate = 51;  % Length of plate in terms of number of grids (500 nm)
 lp = floor(length_plate/2);
 % KEY VARIABLE: separation distance s >= 50
-s = 50;
+s = 50; % 50 pixels = 500 nm
 % KEY VARIABLE: nanowire width d
-d = 1;
+d = 1; % 1 pixel = 10 nm
 position_plate = s / 2; % Position of plate on x axis
 pp1 = mpx + position_plate;
 pp2 = mpx - position_plate;
@@ -182,10 +182,23 @@ set(h3,'fontsize',14);
 fh3 = figure(3);
 set(fh3, 'color', 'white')
 
-%% Modulation strength calculation (CONT)
+%% (Approximate) Modulation strength calculation
 waveguide = E(76:126,76:126); % 500 nm by 500 nm centered at the origin
 average_field_strength = mean(waveguide(:));
 disp(average_field_strength);
+
+%% Maximum speed of modulation calculation (based on r & c given by tuned s & d)
+conductivity = 6.3e7;
+cross_sectional_area = 500e-9 * d * 10e-9;
+resistance = 50e-6 / (conductivity * cross_sectional_area);
+disp(resistance);
+
+surface_area = (cross_sectional_area + 500e-9 * 50e-6 + d * 10e-9 * 50e-6) * 2;
+capacitance = epsilon_waveguide * surface_area / (s * 10e-9);
+disp(capacitance);
+
+modulation_speed = 1 / (resistance * capacitance);
+disp(modulation_speed);
 
 %-------------------------------------------------------------------------%
 % REFERENCE
@@ -194,6 +207,7 @@ disp(average_field_strength);
 
 %% NEXT STEPS:
 % 1. Hand-tune values of s & d to find largest average magnitude of e field
-% through the 500x500 waveguide (modulation strength)
+% through the 500x500 waveguide (modulation strength) (done for now; can
+% include plot for varying values later)
 % 2. Consider RC properties for modulation speed (C found via surface
 % area)
