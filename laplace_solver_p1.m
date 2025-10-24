@@ -218,7 +218,7 @@ fprintf('\n');
 %% NEXT STEPS:
 % 1. Hand-tune values of s & d to find largest average magnitude of e field
 % through the 500x500 waveguide (modulation strength) (done for now; can
-% include plot for varying values later)
+% include plot for varying values later i.e. sweeping)
 % 2. Consider RC properties for modulation speed (C found via surface
 % area) (TODO: consider bcs for current inside wire — but what? J is uniform)
 
@@ -226,3 +226,5 @@ fprintf('\n');
 % 1. "Did you modify the boundary conditions to model current flow in the
 % wires?" But what BCs? Is J not constant? (also ask about whiteboard
 % drawing from class)
+% 2. Capacitance — epsilon * total surface area of both nanowires /
+% separation distance?
