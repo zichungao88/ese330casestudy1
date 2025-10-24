@@ -81,10 +81,6 @@ conductor = false(Nx,Ny);
 conductor(pp1:pp1+d,mpy-hw:mpy+hw) = true; % Inside nanowire
 conductor(pp2-d:pp2,mpy-hw:mpy+hw) = true; % Inside nanowire
 
-% New orange material
-% new_material = false(Nx,Ny);
-% new_material(mpx-wn:mpx+wn,mpy+hw:mpy+hw+height_new_material) = true; % Inside new material
-
 % Permittivity (epsilon) "field" (non-uniform)
 epsilon_0 = 8.854e-12;
 epsilon_r_wg = 1;

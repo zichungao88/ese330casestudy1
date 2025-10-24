@@ -204,8 +204,15 @@ resistance = 50e-6 / (conductivity * cross_sectional_area);
 fprintf('Resistance: %d',resistance);
 fprintf('\n');
 
-surface_area = (cross_sectional_area + 500e-9 * 50e-6 + d * 10e-9 * 50e-6) * 2;
-capacitance = epsilon_wg * surface_area / (s * 10e-9);
+surface_area = (cross_sectional_area + 500e-9 * 50e-6 + d * 10e-9 * 50e-6) * 4;
+% capacitance = epsilon_wg * surface_area / (s * 10e-9);
+% capacitance = 2 * energy
+% energy = surface area * energy density
+% energy density = 1/2 * epsilon * e-field ^ 2
+% TODO: Calculate avg surface field strength w/ for loop
+energy_density = 1/2 * epsilon_0 * average_field_strength ^ 2; % replace w/ actual avg surface field strength
+energy = energy_density * surface_area;
+capacitance = energy * 2; % also divided by V ^ 2 but bias voltage = 1V
 fprintf('Capacitance: %d',capacitance);
 fprintf('\n');
 
@@ -230,11 +237,13 @@ fprintf('\n');
 % 1. "Did you modify the boundary conditions to model current flow in the
 % wires?" But what BCs? Is J not constant? Is there even current at all
 % under DC electrostatic condition? (also ask about whiteboard drawing from
-% class)
+% class) ANS: EITHER E OR J IS FINE
 % 2. Capacitance — epsilon * total surface area of both nanowires /
 % separation distance? (likely solution: energy: E = 1/2 * C * V^2, energy
-% density = 1/2 * epsilon * E^2 --> double integration)
+% density = 1/2 * epsilon * E^2 --> double integration) ANS: Energy ok OR
+% integration via Gauss's Law (easier to stick w/ energy for now) (TODO)
 % 3. Does EO performance = modulation strength = e field strength / area or
-% just e field strength?
+% just e field strength? ANS: EO performance = modulation strength
+% (increases w/ DC E field) = strength / area
 % 4. "Guided light extends 150 nm beyond the walls of the waveguide" =
 % orange height = 150 nm?
