@@ -191,6 +191,9 @@ waveguide = E(mpx-swg:mpx+swg,mpy-swg:mpy+swg); % 500 nm by 500 nm centered at t
 average_field_strength = mean(waveguide(:));
 area_wg = (size_wg * 10e-8) ^ 2;
 modulation_strength = average_field_strength / area_wg;
+fprintf('Avg Waveguide E Field Strength: %d',average_field_strength);
+fprintf('\n');
+
 fprintf('Modulation Strength: %d',modulation_strength);
 fprintf('\n');
 
@@ -227,4 +230,9 @@ fprintf('\n');
 % wires?" But what BCs? Is J not constant? (also ask about whiteboard
 % drawing from class)
 % 2. Capacitance — epsilon * total surface area of both nanowires /
-% separation distance?
+% separation distance? (likely solution: energy: E = 1/2 * C * V^2, energy
+% density = 1/2 * epsilon * E^2 --> double integration)
+% 3. Does EO performance = modulation strength = e field strength / area or
+% just e field strength?
+% 4. "Guided light extends 150 nm beyond the walls of the waveguide" =
+% orange height = 150 nm?

@@ -72,7 +72,7 @@ pp2 = mpx - position_plate;
 size_wg = 50; % 50 pixels = 500 nm
 swg = floor(size_wg/2);
 
-width_new_material = 100; % 100 pixels = 1000 nm
+width_new_material = 200; % 200 pixels = 2000 nm
 height_new_material = 15; % 15 pixels = 150 nm
 wn = floor(width_new_material/2);
 
@@ -197,6 +197,9 @@ waveguide = E(mpx-swg:mpx+swg,mpy-swg:mpy+swg); % 500 nm by 500 nm centered at t
 average_field_strength = mean(waveguide(:));
 area_wg = (size_wg * 10e-8) ^ 2;
 modulation_strength = average_field_strength / area_wg;
+fprintf('Avg Waveguide E Field Strength: %d',average_field_strength);
+fprintf('\n');
+
 fprintf('Modulation Strength: %d',modulation_strength);
 fprintf('\n');
 
