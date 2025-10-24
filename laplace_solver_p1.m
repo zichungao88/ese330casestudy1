@@ -205,12 +205,21 @@ fprintf('Resistance: %d',resistance);
 fprintf('\n');
 
 surface_area = (cross_sectional_area + 500e-9 * 50e-6 + d * 10e-9 * 50e-6) * 4;
-% capacitance = epsilon_wg * surface_area / (s * 10e-9);
-% capacitance = 2 * energy
-% energy = surface area * energy density
-% energy density = 1/2 * epsilon * e-field ^ 2
-% TODO: Calculate avg surface field strength w/ for loop
-energy_density = 1/2 * epsilon_0 * average_field_strength ^ 2; % replace w/ actual avg surface field strength
+total_surface_field_strength = 0;
+count = 0;
+for i = 1:Nx
+    for j = 1:Ny
+        if ((i >= pp1 && i <= pp1+d) || (i >= pp2-d && i <= pp2)) && (j == mpy-hw || j == mpy+hw)
+            total_surface_field_strength = total_surface_field_strength + E(i,j);
+            count = count + 1;
+        elseif (j > mpy-hw && j < mpy+hw) && (i == pp1 || i == pp1+d || i == pp2 || i == pp2-d)
+            total_surface_field_strength = total_surface_field_strength + E(i,j);
+            count = count + 1;
+        end
+    end
+end
+average_surface_field_strength = total_surface_field_strength / count;
+energy_density = 1/2 * epsilon_0 * average_surface_field_strength ^ 2;
 energy = energy_density * surface_area;
 capacitance = energy * 2; % also divided by V ^ 2 but bias voltage = 1V
 fprintf('Capacitance: %d',capacitance);
@@ -241,7 +250,7 @@ fprintf('\n');
 % 2. Capacitance — epsilon * total surface area of both nanowires /
 % separation distance? (likely solution: energy: E = 1/2 * C * V^2, energy
 % density = 1/2 * epsilon * E^2 --> double integration) ANS: Energy ok OR
-% integration via Gauss's Law (easier to stick w/ energy for now) (TODO)
+% integration via Gauss's Law (easier to stick w/ energy for now)
 % 3. Does EO performance = modulation strength = e field strength / area or
 % just e field strength? ANS: EO performance = modulation strength
 % (increases w/ DC E field) = strength / area
