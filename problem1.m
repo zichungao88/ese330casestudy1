@@ -22,7 +22,7 @@ clear all;
 % properties
 
 
-%% TODO: UPDATED QUESTIONS for 10/21 office hours
+%% UPDATED QUESTIONS for 10/21 office hours (all answered)
 % 1. Is E field direction incorrect in Figure 2? (ANS: yes but does not
 % matter in terms of solving the problems)
 % 2. Is there a specific quantity for max speed of modulation? Same as

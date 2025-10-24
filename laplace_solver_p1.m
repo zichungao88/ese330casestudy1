@@ -218,17 +218,19 @@ fprintf('\n');
 %           SADIKU, ELEMENTS OF ELECTROMAGNETICS, 4TH EDITION, OXFORD
 %-------------------------------------------------------------------------%
 
-%% NEXT STEPS:
-% 1. Hand-tune values of s & d to find largest average magnitude of e field
-% through the 500x500 waveguide (modulation strength) (done for now; can
-% include plot for varying values later i.e. sweeping)
-% 2. Consider RC properties for modulation speed (C found via surface
-% area) (TODO: consider bcs for current inside wire — but what? J is uniform)
+%% Report Key Includes:
+% 1. All 6 "existing" modified plots —— potential contour, field contour, &
+% field vectors for both problems 1 & 2
+% 2. chart/manual plot (e.g. via spreadsheets) of hand-tuned values
+% for s, d, & orange width
+% 3. Results: Both P1 & P2: fprintf values; P2 only: yes, slightly better
+% performance (slightly higher E)
 
 %% QUESTIONS FOR 10/24 OFFICE HOURS:
 % 1. "Did you modify the boundary conditions to model current flow in the
-% wires?" But what BCs? Is J not constant? (also ask about whiteboard
-% drawing from class)
+% wires?" But what BCs? Is J not constant? Is there even current at all
+% under DC electrostatic condition? (also ask about whiteboard drawing from
+% class)
 % 2. Capacitance — epsilon * total surface area of both nanowires /
 % separation distance? (likely solution: energy: E = 1/2 * C * V^2, energy
 % density = 1/2 * epsilon * E^2 --> double integration)
