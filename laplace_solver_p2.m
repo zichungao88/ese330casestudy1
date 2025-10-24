@@ -65,7 +65,7 @@ hw = floor(height_wire/2);
 s = 52; % 52 pixels = 520 nm
 % KEY VARIABLE: nanowire width d
 d = 20; % given this time: 20 pixels = 200 nm
-position_plate = s / 2; % Position of plate on x axis
+position_plate = floor(s/2); % Position of plate on x axis
 pp1 = mpx + position_plate;
 pp2 = mpx - position_plate;
 
