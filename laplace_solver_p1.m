@@ -101,7 +101,6 @@ for z = 1:Ni    % Number of iterations
             % results in 0V wire disappearing
             % Solution: offset electric potentials so to range from
             % -0.5 to +0.5
-            %V(mpy-lp2:mpy+lp2,mpy-lp2:mpy+lp2) = -1;
             if ~(conductor(i,j))
                 epsilon_x_positive = 0.5 * (epsilon_field(i,j) + epsilon_field(i+1,j));
                 epsilon_x_negative = 0.5 * (epsilon_field(i,j) + epsilon_field(i-1,j));
@@ -129,8 +128,7 @@ y = (1:Ny)-mpy;
 %% Contour Display for electric potential
 figure(1)
 contour_range_V = -101:0.5:101;
-contourf(x,y,V,100,'LineColor','none')%,contour_range_V,'linewidth',0.5);%contour(x,y,V,contour_range_V,'linewidth',0.5)
-%hold on, quiver(x,y,Ex,Ey,3,"k")
+contourf(x,y,V,100,'LineColor','none')
 title('Electric Potential Distribution V(x,y) in Volts','fontsize',14,'color','black');
 axis([min(x) max(x) min(y) max(y)]);
 cb = colorbar('location','eastoutside','fontsize',14,'color','black');
@@ -151,7 +149,7 @@ set(fh1, 'color', 'white')
 %% Contour Display for electric field
 figure(2)
 contour_range_E = -20:0.05:20;
-contourf(x,y,E,100,'LineColor', 'None');%,contour_range_E,'linewidth',0.5);%contour(x,y,E,contour_range_E,'linewidth',0.5)
+contourf(x,y,E,100,'LineColor', 'None');
 title('Electric Field Distribution E(x,y) in V/m','fontsize',14,'color','black');
 axis([min(x) max(x) min(y) max(y)]);
 colorbar('location','eastoutside','fontsize',14,'color','black');
@@ -170,7 +168,7 @@ set(fh2, 'color', 'white')
 %% Quiver Display for electric field Lines
 figure(3)
 contour(x,y,E,'linewidth',0.5);
-hold on, quiver(x,y,Ex,Ey,6)%quiver(x,y,Ex,Ey,2)
+hold on, quiver(x,y,Ex,Ey,6)
 title('Electric Field Vector Lines E(x,y) in V/m','fontsize',14,'color','black');
 axis([min(x) max(x) min(y) max(y)]);
 colorbar('location','eastoutside','fontsize',14,'color','black');
