@@ -1,7 +1,7 @@
 %% Adapted from Prof. Mark Lawrence
 % Jerry Gao
 % Prof. Lawrence
-% FL25 ESE 3300/330 Engineering Electromagnets Principles
+% FL25 ESE 3300/330 Engineering Electromagnetics Principles
 % Midterm Case Study 1
 % 19 October 2025
 % Problem 2
@@ -190,7 +190,7 @@ set(fh3, 'color', 'white')
 
 %% (Approximate) Modulation strength calculation
 waveguide = E(mpx-swg:mpx+swg,mpy-swg:mpy+swg); % 500 nm by 500 nm centered at the origin
-average_field_strength = mean(waveguide(:));
+average_field_strength = mean(waveguide,'all');
 area_wg = (size_wg * 10e-8) ^ 2;
 modulation_strength = average_field_strength / area_wg;
 fprintf('Avg Waveguide E Field Strength: %d',average_field_strength);

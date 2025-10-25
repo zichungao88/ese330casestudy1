@@ -1,7 +1,7 @@
 %% Adapted from Prof. Mark Lawrence
 % Jerry Gao
 % Prof. Lawrence
-% FL25 ESE 3300/330 Engineering Electromagnets Principles
+% FL25 ESE 3300/330 Engineering Electromagnetics Principles
 % Midterm Case Study 1
 % 18 October 2025
 % Problem 1
@@ -94,8 +94,8 @@ for z = 1:Ni    % Number of iterations
         for j=2:Ny-1
             % The next two lines are meant to force the matrix to hold the 
             % potential values for all iterations
-            V(pp1:pp1+d,mpy-hw:mpy+hw) = 0.5; % ACTUAL BCS (V(x=s) = 1)
-            V(pp2-d:pp2,mpy-hw:mpy+hw) = -0.5; % ACTUAL BCS (V(x=0) = 0)
+            V(pp1:pp1+d,mpy-hw:mpy+hw) = 0.5; % BCs (V(x=s) = 1)
+            V(pp2-d:pp2,mpy-hw:mpy+hw) = -0.5; % BCs (V(x=0) = 0)
             % BC Problem: original BCs run from 0 to 1, but grounding
             % everywhere else (edges, corners, etc.) to 0V by default
             % results in 0V wire disappearing
@@ -188,7 +188,7 @@ set(fh3, 'color', 'white')
 
 %% (Approximate) Modulation strength calculation
 waveguide = E(mpx-swg:mpx+swg,mpy-swg:mpy+swg); % 500 nm by 500 nm centered at the origin
-average_field_strength = mean(waveguide(:));
+average_field_strength = mean(waveguide,'all');
 area_wg = (size_wg * 10e-8) ^ 2;
 modulation_strength = average_field_strength / area_wg;
 fprintf('Avg Waveguide E Field Strength: %d',average_field_strength);
@@ -207,8 +207,8 @@ fprintf('\n');
 surface_area = (cross_sectional_area + 500e-9 * 50e-6 + d * 10e-9 * 50e-6) * 4;
 total_surface_field_strength = 0;
 count = 0;
-for i = 1:Nx
-    for j = 1:Ny
+for i = 1:Nx % outer loop: matrix width
+    for j = 1:Ny % inner loop: matrix height
         if ((i >= pp1 && i <= pp1+d) || (i >= pp2-d && i <= pp2)) && (j == mpy-hw || j == mpy+hw)
             total_surface_field_strength = total_surface_field_strength + E(i,j);
             count = count + 1;
@@ -233,26 +233,3 @@ fprintf('\n');
 % REFERENCE
 %           SADIKU, ELEMENTS OF ELECTROMAGNETICS, 4TH EDITION, OXFORD
 %-------------------------------------------------------------------------%
-
-%% Report Key Includes:
-% 1. All 6 "existing" modified plots —— potential contour, field contour, &
-% field vectors for both problems 1 & 2
-% 2. chart/manual plot (e.g. via spreadsheets) of hand-tuned values
-% for s, d, & orange width
-% 3. Results: Both P1 & P2: fprintf values; P2 only: yes, slightly better
-% performance (slightly higher E)
-
-%% QUESTIONS FOR 10/24 OFFICE HOURS:
-% 1. "Did you modify the boundary conditions to model current flow in the
-% wires?" But what BCs? Is J not constant? Is there even current at all
-% under DC electrostatic condition? (also ask about whiteboard drawing from
-% class) ANS: EITHER E OR J IS FINE
-% 2. Capacitance — epsilon * total surface area of both nanowires /
-% separation distance? (likely solution: energy: E = 1/2 * C * V^2, energy
-% density = 1/2 * epsilon * E^2 --> double integration) ANS: Energy ok OR
-% integration via Gauss's Law (easier to stick w/ energy for now)
-% 3. Does EO performance = modulation strength = e field strength / area or
-% just e field strength? ANS: EO performance = modulation strength
-% (increases w/ DC E field) = strength / area
-% 4. "Guided light extends 150 nm beyond the walls of the waveguide" =
-% orange height = 150 nm?
